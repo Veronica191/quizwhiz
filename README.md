@@ -1,16 +1,32 @@
-# React + Vite
+1. QuizWhiz – Interactive Quiz App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+QuizWhiz is a fun and simple web app where you can take quizzes on different topics. Built with React, Vite, and Tailwind CSS, it fetches questions from the Open Trivia Database (OpenTDB) and shows your score at the end.
 
-Currently, two official plugins are available:
+ 2. Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Select quiz categories
+Multiple-choice questions
+Score calculation
+Final results page
+Responsive design with Tailwind CSS
 
-## React Compiler
+3. Tech Used
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+React (Vite)
+Tailwind CSS
+JavaScript
+Open Trivia Database API
 
-## Expanding the ESLint configuration
+ 4. How to Run
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Clone the repo:
+git clone https://github.com/YOUR_USERNAME/quizwhiz.git
+cd quizwhiz
+
+
+5. Install dependencies:
+npm install
+
+6. Start the app:
+npm run dev
+Open in your browser at http://localhost:5173/.
