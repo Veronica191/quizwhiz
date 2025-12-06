@@ -20,7 +20,7 @@ Open Trivia Database API
  4. How to Run
 
 Clone the repo:
-git clone https://github.com/YOUR_USERNAME/quizwhiz.git
+git clone https://github.com/Veronica191/quizwhiz.git
 cd quizwhiz
 
 
