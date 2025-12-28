@@ -1,50 +1,126 @@
 import React, { useState, useEffect } from "react"
 
-export default function QuestionCard({ question, onAnswer, questionNumber, totalQuestions }) {
-  const [answers, setAnswers] = useState([])
-  const [timeLeft, setTimeLeft] = useState(15) // 15 seconds per question
+// Decode HTML entities (VERY IMPORTANT for OpenTDB)
+function decodeHTML(html) {
+  const txt = document.createElement("textarea")
+  txt.innerHTML = html
+  return txt.value
+}
 
+export default function QuestionCard({
+  question,
+  onAnswer,
+  questionNumber,
+  totalQuestions
+}) {
+  const [answers, setAnswers] = useState([])
+  const [timeLeft, setTimeLeft] = useState(15)
+  const [answered, setAnswered] = useState(false)
+
+  const correctAnswer = decodeHTML(question.correct_answer)
+
+  // Shuffle answers & reset state on new question
   useEffect(() => {
-    const shuffled = [...question.incorrect_answers, question.correct_answer].sort(() => Math.random() - 0.5)
-    setAnswers(shuffled)
-    setTimeLeft(15) // reset timer for each question
+    const shuffledAnswers = [
+      ...question.incorrect_answers,
+      question.correct_answer
+    ]
+      .map(decodeHTML)
+      .sort(() => Math.random() - 0.5)
+
+    setAnswers(shuffledAnswers)
+    setTimeLeft(15)
+    setAnswered(false)
   }, [question])
 
-  // Timer countdown
+  // Timer logic
   useEffect(() => {
+    if (answered) return
+
     if (timeLeft === 0) {
-      onAnswer(false) // auto mark as incorrect if time runs out
+      setAnswered(true)
+      onAnswer({
+        answer: null,
+        isCorrect: false
+      })
       return
     }
-    const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
+
+    const timer = setTimeout(() => {
+      setTimeLeft(prev => prev - 1)
+    }, 1000)
+
     return () => clearTimeout(timer)
-  }, [timeLeft, onAnswer])
+  }, [timeLeft, answered, onAnswer])
+
+  function handleClick(answer) {
+    if (answered) return
+
+    setAnswered(true)
+
+    const decodedAnswer = decodeHTML(answer)
+    const decodedCorrect = decodeHTML(question.correct_answer)
+
+    const isCorrect = decodedAnswer === decodedCorrect
+
+    onAnswer({
+      answer: decodedAnswer,
+      isCorrect
+    })
+  }
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 border rounded shadow">
-      <div className="mb-2">
-        <div className="flex justify-between mb-1">
-          <p>Question {questionNumber} of {totalQuestions}</p>
-          <p>Time Left: {timeLeft}s</p>
-        </div>
-        <div className="w-full bg-gray-200 rounded h-2">
-          <div
-            className="bg-blue-500 h-2 rounded"
-            style={{ width: `${(questionNumber / totalQuestions) * 100}%` }}
-          />
+    <div className="bg-white rounded-xl shadow p-4 sm:p-6 mt-6 sm:mt-10">
+      {/* Top Bar */}
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-xs sm:text-sm font-medium text-slate-600">
+          Question {questionNumber} of {totalQuestions}
+        </span>
+
+        {/* Timer */}
+        <div
+          className={`px-3 py-1 rounded-full text-xs sm:text-sm font-bold
+            ${
+              timeLeft <= 5
+                ? "bg-red-100 text-red-600 animate-pulse"
+                : "bg-green-100 text-green-600"
+            }
+          `}
+        >
+          ⏱ {timeLeft}s
         </div>
       </div>
 
-      <h3 className="mb-4" dangerouslySetInnerHTML={{ __html: question.question }}></h3>
+      {/* Progress Bar */}
+      <div className="w-full h-2 bg-slate-200 rounded-full mb-6 overflow-hidden">
+        <div
+          className="h-2 bg-black-500 rounded-full transition-all duration-500"
+          style={{ width: `${(questionNumber / totalQuestions) * 100}%` }}
+        />
+      </div>
 
-      <div className="flex flex-col gap-2">
+      {/* Question */}
+      <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-6">
+        {decodeHTML(question.question)}
+      </h3>
+
+      {/* Answers */}
+      <div className="grid gap-3">
         {answers.map((answer, i) => (
           <button
             key={i}
-            className="p-2 border rounded hover:bg-green-500 hover:text-white"
-            onClick={() => onAnswer(answer === question.correct_answer)}
-            dangerouslySetInnerHTML={{ __html: answer }}
-          />
+            disabled={answered}
+            onClick={() => handleClick(answer)}
+            className={`w-full px-4 py-3 rounded-lg border transition-all
+              ${
+                answered
+                  ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                  : "bg-white hover:bg-green-50 hover:border-green-500"
+              }
+            `}
+          >
+            {answer}
+          </button>
         ))}
       </div>
     </div>
