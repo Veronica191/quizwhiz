@@ -11,9 +11,9 @@ function Sidebar() {
   }
 
   const navItems = [
-    { name: "Landing", path: "/", icon: "🏠" },
-    { name: "Categories", path: "/home", icon: "🎯" },
-    { name: "Quiz", path: "/quiz", icon: "🧠" },
+    { name: "Landing", path: "/", icon: "" },
+    { name: "Categories", path: "/home", icon: "" },
+    { name: "Quiz", path: "/quiz", icon: "" },
   ]
 
   const isActive = (path) => location.pathname === path

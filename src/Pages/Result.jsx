@@ -31,16 +31,16 @@ export default function Result({
   
   const percentage = total === 0 ? 0 : (score / total) * 100
 
-  let feedback = "Better luck next time 🙂"
+  let feedback = "Better luck next time "
   let feedbackColor = "text-red-500"
   let borderColor = "border-red-500"
 
   if (percentage >= 70) {
-    feedback = "Excellent work! 🎉"
+    feedback = "Excellent work! "
     feedbackColor = "text-green-600"
     borderColor = "border-green-500"
   } else if (percentage >= 40) {
-    feedback = "Good effort! 👍"
+    feedback = "Good effort! "
     feedbackColor = "text-yellow-500"
     borderColor = "border-yellow-500"
   }
@@ -123,7 +123,7 @@ export default function Result({
                 </p>
 
                 <p className="text-sm font-semibold mt-1">
-                  {item.isCorrect ? "✅ Correct" : "❌ Wrong"}
+                  {item.isCorrect ? " Correct" : " Wrong"}
                 </p>
               </div>
             ))

@@ -23,8 +23,8 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-slate-100 p-6">
-      <h1 className="text-4xl font-bold text-center mb-8">🧠 My Quiz App</h1>
+    <div className="min-h-screen bg-slate-900 p-6">
+      <h1 className="text-4xl font-bold text-center mb-8 text-white"> My Quiz App</h1>
 
       {/* Categories Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-4xl mx-auto mb-8">
