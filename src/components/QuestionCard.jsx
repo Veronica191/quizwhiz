@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react"
-
-// Decode HTML entities (VERY IMPORTANT for OpenTDB)
-function decodeHTML(html) {
-  const txt = document.createElement("textarea")
-  txt.innerHTML = html
-  return txt.value
-}
+import decodeHTML from "../utils/decodeHTML"
 
 export default function QuestionCard({
   question,
@@ -13,18 +7,19 @@ export default function QuestionCard({
   questionNumber,
   totalQuestions
 }) {
+  if (!question) return null
   const [answers, setAnswers] = useState([])
   const [timeLeft, setTimeLeft] = useState(15)
   const [answered, setAnswered] = useState(false)
 
-  const correctAnswer = decodeHTML(question.correct_answer)
+  const correctAnswer = decodeHTML(question.correct_answer || "")
 
   // Shuffle answers & reset state on new question
   useEffect(() => {
-    const shuffledAnswers = [
-      ...question.incorrect_answers,
-      question.correct_answer
-    ]
+    const answers = Array.isArray(question.incorrect_answers)
+      ? [...question.incorrect_answers, question.correct_answer]
+      : [question.correct_answer]
+    const shuffledAnswers = answers
       .map(decodeHTML)
       .sort(() => Math.random() - 0.5)
 
@@ -94,7 +89,7 @@ export default function QuestionCard({
       {/* Progress Bar */}
       <div className="w-full h-2 bg-slate-200 rounded-full mb-6 overflow-hidden">
         <div
-          className="h-2 bg-black-500 rounded-full transition-all duration-500"
+          className="h-2 bg-blue-500 rounded-full transition-all duration-500"
           style={{ width: `${(questionNumber / totalQuestions) * 100}%` }}
         />
       </div>

@@ -1,34 +1,15 @@
 import React from "react"
-import { useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import decodeHTML from "../utils/decodeHTML"
+import { getQuizResult, clearQuizResult } from "../utils/storage"
 
-// helper to decode HTML entities
-const decodeHTML = (text = "") => {
-  const txt = document.createElement("textarea")
-  txt.innerHTML = text
-  return txt.value
-}
-
-export default function Result({
-  score = 0,
-  total = 0,
-  answers = [],        // ✅ SAFE DEFAULT
-  onRestart = () => {},// ✅ SAFE DEFAULT
-  onHome = () => {}    // ✅ SAFE DEFAULT
-}) {
-   // Save score to localStorage on component mount
-  useEffect(() => {
-    const history = JSON.parse(localStorage.getItem("quizHistory")) || []
-
-    history.push({
-      score,
-      total,
-      date: new Date().toLocaleDateString()
-    })
-
-    localStorage.setItem("quizHistory", JSON.stringify(history))
-  }, [score, total]) // run only when score or total changes
-
+export default function Result() {
+  const navigate = useNavigate()
+  const result = getQuizResult()
   
+  const score = result?.score ?? 0
+  const total = result?.total ?? 0
+  const answers = result?.answers ?? []
   const percentage = total === 0 ? 0 : (score / total) * 100
 
   let feedback = "Better luck next time "
@@ -77,59 +58,43 @@ export default function Result({
 
       {/* Buttons */}
       <button
-        onClick={onRestart}
+        onClick={() => { clearQuizResult(); navigate("/home"); }}
         className="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-full font-semibold mb-4"
       >
         Retake Quiz
       </button>
 
       <button
-        onClick={onHome}
-        className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-full font-semibold mb-6"
+        onClick={() => navigate("/home")}
+        className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-full font-semibold mb-4"
       >
         Back to Home
       </button>
 
-      {/* Review Answers */}
+      <button
+        onClick={() => navigate("/review")}
+        className="w-full bg-purple-500 hover:bg-purple-600 text-white py-3 rounded-full font-semibold mb-6"
+      >
+        Review Answers
+      </button>
+
+      {/* Review Answers Preview */}
       <div className="text-left">
-        <h3 className="text-lg font-semibold mb-3 text-center">
-          Review Answers
-        </h3>
-
-        <div className="space-y-3">
+        <h3 className="text-lg font-semibold mb-3 text-center">Quick Summary</h3>
+        <div className="space-y-2 max-h-48 overflow-y-auto">
           {answers.length === 0 ? (
-            <p className="text-center text-slate-500">
-              No answers to review.
-            </p>
+            <p className="text-center text-slate-500 text-sm">No answers to show.</p>
           ) : (
-            answers.map((item, index) => (
-              <div
-                key={index}
-                className={`p-3 rounded-lg border ${
-                  item.isCorrect
-                    ? "border-green-500 bg-green-50"
-                    : "border-red-500 bg-red-50"
-                }`}
-              >
-                <p className="font-medium text-sm mb-1">
-                  {index + 1}. {decodeHTML(item.question)}
-                </p>
-
-                <p className="text-sm">
-                  Correct answer:{" "}
-                  <span className="font-semibold text-green-700">
-                    {decodeHTML(item.correctAnswer)}
-                  </span>
-                </p>
-
-                <p className="text-sm font-semibold mt-1">
-                  {item.isCorrect ? " Correct" : " Wrong"}
-                </p>
+            answers.slice(0, 3).map((item, index) => (
+              <div key={index} className={`p-2 rounded text-xs ${item.isCorrect ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"}`}>
+                <p className="font-medium">{index + 1}. {decodeHTML(item.question)}</p>
               </div>
             ))
           )}
+          {answers.length > 3 && <p className="text-xs text-slate-500 text-center">+ {answers.length - 3} more...</p>}
         </div>
       </div>
+
     </div>
   )
 }

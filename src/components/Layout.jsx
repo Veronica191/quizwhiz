@@ -3,6 +3,8 @@ import Sidebar from "./Sidebar"
 import Home from "../Pages/Home"
 import Quiz from "../Pages/Quiz"
 import LandingPage from "../Pages/index"
+import Result from "../Pages/Result"
+import Review from "../Pages/Review"
 
 function Layout() {
   const navigate = useNavigate()
@@ -26,6 +28,9 @@ function Layout() {
             path="/quiz"
             element={<Quiz onHome={() => navigate("/home")} />}
           />
+          {/* Results and Review pages */}
+          <Route path="/results" element={<Result />} />
+          <Route path="/review" element={<Review />} />
 
           {/* Catch-all 404 */}
           <Route

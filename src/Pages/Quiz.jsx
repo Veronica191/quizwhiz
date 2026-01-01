@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import QuestionCard from "../components/QuestionCard";
-import Result from "./Result";
 import ProgressBar from "../components/ProgressBar";
+import { saveQuizResult, addToQuizHistory } from "../utils/storage";
 
 export default function Quiz({ onHome }) {
   const location = useLocation();
@@ -135,20 +135,18 @@ export default function Quiz({ onHome }) {
     );
   }
 
-  // 🔹 QUIZ FINISHED
-  return (
-    <Result
-      score={score}
-      total={questions.length}
-      answers={userAnswers}
-      onRestart={() => {
-        setQuizStarted(false);
-        setCurrentIndex(0);
-        setScore(0);
-        setUserAnswers([]);
-        setQuestions([]);
-      }}
-      onHome={onHome}
-    />
-  );
+  // 🔹 QUIZ FINISHED - save and navigate to results
+  if (currentIndex >= questions.length && quizStarted) {
+    const result = {
+      score,
+      total: questions.length,
+      answers: userAnswers,
+    };
+    saveQuizResult(result);
+    addToQuizHistory({ score, total: questions.length });
+    navigate("/results");
+    return null;
+  }
+
+  return null;
 }
